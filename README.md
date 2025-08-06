@@ -1,4 +1,22 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DevKey Hub
+
+A modern API key management dashboard and playground built with Next.js and Supabase.
+
+## Features
+
+- 🔑 **API Key Management**: Create, edit, delete, and monitor API keys
+- 🎮 **API Playground**: Test your API keys with interactive endpoints
+- 📊 **Usage Tracking**: Monitor API usage and limits
+- 🔒 **Secure Validation**: Real-time API key validation
+- 🎨 **Modern UI**: Clean, responsive interface with Tailwind CSS
+- ⚡ **Fast Performance**: Built with Next.js 15 and Turbopack
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 19, Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: API Key-based validation
 
 ## Getting Started
 
