@@ -163,7 +163,7 @@ export default function Playground() {
               </h3>
               <div className="mt-2 text-sm text-blue-700">
                 <p>
-                  Enter your API key to validate it. If valid, you'll be redirected to the protected playground where you can test API endpoints.
+                  Enter your API key to validate it. If valid, you&apos;ll be redirected to the protected playground where you can test API endpoints.
                 </p>
               </div>
             </div>

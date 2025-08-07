@@ -18,7 +18,7 @@ export default function DeleteConfirmModal({ isOpen, onClose, onConfirm, keyName
           <h3 className="ml-3 text-lg font-medium text-red-900">Delete API Key</h3>
         </div>
         <p className="text-sm text-gray-600 mb-6">
-          Are you sure you want to delete the API key "<strong>{keyName}</strong>"? 
+          Are you sure you want to delete the API key &quot;<strong>{keyName}</strong>&quot;? 
           This action cannot be undone.
         </p>
         
