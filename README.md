@@ -23,12 +23,16 @@ A modern API key management dashboard and playground built with Next.js and Supa
 First, run the development server:
 
 ```bash
-npm run dev
-# or
+# Using yarn (recommended)
 yarn dev
-# or
+
+# Using npm
+npm run dev
+
+# Using pnpm
 pnpm dev
-# or
+
+# Using bun
 bun dev
 ```
 
