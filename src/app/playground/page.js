@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '../../components/ui/Button';
 import Toast from '../../components/ui/Toast';
+import AuthGuard from '../../components/auth/AuthGuard';
 import { useToast } from '../../hooks/useToast';
 
 export default function Playground() {
@@ -59,7 +60,8 @@ export default function Playground() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <AuthGuard>
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       {/* Toast Notification */}
       <Toast toast={toast} onClose={hideToast} />
 
@@ -170,6 +172,7 @@ export default function Playground() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </AuthGuard>
   );
 } 

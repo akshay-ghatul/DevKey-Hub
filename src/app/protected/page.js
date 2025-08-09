@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '../../components/ui/Button';
 import Toast from '../../components/ui/Toast';
+import AuthGuard from '../../components/auth/AuthGuard';
 import { useToast } from '../../hooks/useToast';
 
 export default function Protected() {
@@ -85,7 +86,8 @@ export default function Protected() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <AuthGuard>
+      <div className="min-h-screen bg-gray-50">
       {/* Toast Notification */}
       <Toast toast={toast} onClose={hideToast} />
 
@@ -235,6 +237,7 @@ export default function Protected() {
           </Button>
         </div>
       </div>
-    </div>
+      </div>
+    </AuthGuard>
   );
 } 

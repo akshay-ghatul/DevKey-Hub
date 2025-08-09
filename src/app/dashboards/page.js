@@ -8,6 +8,8 @@ import EditApiKeyModal from '../../components/dashboard/EditApiKeyModal';
 import DeleteConfirmModal from '../../components/dashboard/DeleteConfirmModal';
 import Toast from '../../components/ui/Toast';
 import Button from '../../components/ui/Button';
+import AuthGuard from '../../components/auth/AuthGuard';
+import SessionDebug from '../../components/auth/SessionDebug';
 import { useApiKeys } from '../../hooks/useApiKeys';
 import { useToast } from '../../hooks/useToast';
 import { copyToClipboard } from '../../utils/clipboard';
@@ -97,15 +99,16 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 relative">
-      {/* Toast Notification */}
-      <Toast toast={toast} onClose={hideToast} />
+    <AuthGuard>
+      <div className="min-h-screen bg-gray-50 relative">
+        {/* Toast Notification */}
+        <Toast toast={toast} onClose={hideToast} />
 
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} />
+        {/* Sidebar */}
+        <Sidebar isOpen={sidebarOpen} />
 
-      {/* Main Content */}
-      <div className={`transition-all duration-300 ease-in-out ${sidebarOpen ? 'ml-64' : 'ml-0'}`}>
+        {/* Main Content */}
+        <div className={`transition-all duration-300 ease-in-out ${sidebarOpen ? 'ml-64' : 'ml-0'}`}>
         <div className="px-8 py-6">
           {/* Header */}
           <div className="mb-8">
@@ -251,6 +254,8 @@ export default function Dashboard() {
         onConfirm={() => handleDelete(deleteConfirm.keyId)}
         keyName={deleteConfirm.keyName}
       />
-    </div>
+      </div>
+      <SessionDebug />
+    </AuthGuard>
   );
 } 

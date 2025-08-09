@@ -94,22 +94,8 @@ export async function POST(request) {
 
     // Return success response with summary
     return NextResponse.json({
-      valid: true,
-      message: 'GitHub repository summarized successfully',
-      data: {
-        apiKey: {
-          id: apiKeyData.id,
-          name: apiKeyData.name,
-          usage: apiKeyData.usage,
-          limitUsage: apiKeyData.limit_usage,
-          monthlyLimit: apiKeyData.monthly_limit
-        },
-        repository: {
-          url: githubUrl,
-          summary: summary.summary,
-          coolFacts: summary.cool_facts
-        }
-      }
+      summary: summary.summary,
+      cool_facts: summary.cool_facts
     });
 
   } catch (error) {
