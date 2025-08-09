@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
+import { getOrCreateUser } from '../../../../../lib/userService.js'
 
 const authOptions = {
   providers: [
@@ -8,7 +9,16 @@ const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
-          scope: 'openid email profile'
+          scope: 'openid email profile https://www.googleapis.com/auth/userinfo.profile'
+        }
+      },
+      profile(profile) {
+        console.log('Google Profile received:', profile)
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
         }
       }
     })
@@ -26,11 +36,17 @@ const authOptions = {
       if (account && profile) {
         token.accessToken = account.access_token
         token.id = profile.sub
-        token.picture = profile.picture
+        token.picture = profile.picture || user.image
         token.name = profile.name
         token.email = profile.email
         
+        // Store database user information
+        token.dbId = user.dbId
+        token.isNewUser = user.isNewUser
+        
         console.log('JWT Callback - Initial login, setting token.picture to:', token.picture)
+        console.log('JWT Callback - Database user ID:', token.dbId)
+        console.log('JWT Callback - Is new user:', token.isNewUser)
       }
       
       // On subsequent calls, preserve the picture if it exists
@@ -58,6 +74,10 @@ const authOptions = {
       session.user.email = token.email
       session.user.image = token.picture
       
+      // Add database user information
+      session.user.dbId = token.dbId
+      session.user.isNewUser = token.isNewUser
+      
       console.log('Session Callback - Final session:', session)
       console.log('Session Callback - Final session.user.image:', session.user.image)
       
@@ -67,6 +87,49 @@ const authOptions = {
       console.log('SignIn Callback - User:', user)
       console.log('SignIn Callback - Account:', account)
       console.log('SignIn Callback - Profile:', profile)
+      
+      // Only process for Google OAuth sign-ins
+      if (account?.provider === 'google' && profile) {
+        try {
+          console.log('SignIn: Processing Google OAuth sign-in')
+          
+          const userData = {
+            googleId: profile.sub,
+            email: profile.email,
+            name: profile.name,
+            imageUrl: profile.picture
+          }
+          
+          console.log('SignIn: Creating/updating user with data:', userData)
+          
+          const result = await getOrCreateUser(userData)
+          
+          if (result.success) {
+            console.log('SignIn: User processed successfully:', {
+              userId: result.user.id,
+              isNewUser: result.isNewUser
+            })
+            
+            // Add database user info to the user object for the JWT callback
+            user.dbId = result.user.id
+            user.isNewUser = result.isNewUser
+            user.image = result.user.image_url || profile.picture
+            
+            if (result.isNewUser) {
+              console.log('🎉 SignIn: Welcome new user!', result.user.name || result.user.email)
+            } else {
+              console.log('👋 SignIn: Welcome back!', result.user.name || result.user.email)
+            }
+          } else {
+            console.error('SignIn: Failed to process user:', result.error)
+            // Still allow sign-in even if database operation fails
+          }
+        } catch (error) {
+          console.error('SignIn: Error processing user registration:', error)
+          // Still allow sign-in even if database operation fails
+        }
+      }
+      
       return true
     },
     async redirect({ url, baseUrl }) {
