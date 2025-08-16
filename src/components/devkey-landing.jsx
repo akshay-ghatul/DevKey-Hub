@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { GitBranch, Star, TrendingUp, Zap, Shield, BarChart3, GitPullRequest } from "lucide-react"
 import { useSession, signIn, signOut } from "next-auth/react"
+import ApiDemo from "./ApiDemo"
 
 export default function HomePage() {
   const { data: session, status } = useSession()
@@ -181,7 +182,19 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      
+      {/* API Demo Section */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-foreground mb-4">Try Our API Live</h2>
+            <p className="text-lg text-muted-foreground">Test the GitHub Analyzer API with real repositories</p>
+          </div>
 
+          <ApiDemo />
+        </div>
+      </section>
+  
       {/* Pricing Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-4xl">
