@@ -223,9 +223,9 @@ export default function HomePage() {
             </Card>
 
             {/* Pro Tier */}
-            <Card className="border-orange-300 relative shadow-lg">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white border-0">Most Popular</Badge>
+            <Card className="border-primary relative shadow-lg">
+              <div className="absolute -top-2 -right-2">
+                <Badge className="bg-orange-500 text-white text-xs px-2 py-1">Coming Soon</Badge>
               </div>
               <CardHeader className="text-center">
                 <CardTitle className="text-foreground">Pro</CardTitle>
@@ -235,34 +235,37 @@ export default function HomePage() {
               <CardContent className="space-y-4">
                 <ul className="space-y-3 text-sm">
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     100 repository analyses per month
                   </li>
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     Advanced analytics & insights
                   </li>
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     PR tracking & version monitoring
                   </li>
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     Export reports (PDF, CSV)
                   </li>
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     Priority support
                   </li>
                 </ul>
-                <Button className="w-full mt-6 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
-                  Start Pro Trial
+                <Button disabled className="w-full mt-6 bg-muted text-muted-foreground cursor-not-allowed">
+                  Coming Soon
                 </Button>
               </CardContent>
             </Card>
 
             {/* Enterprise Tier */}
             <Card className="border-border relative">
+              <div className="absolute -top-2 -right-2">
+                <Badge className="bg-orange-500 text-white text-xs px-2 py-1">Coming Soon</Badge>
+              </div>
               <CardHeader className="text-center">
                 <CardTitle className="text-foreground">Enterprise</CardTitle>
                 <div className="text-3xl font-bold text-foreground mt-4">Custom</div>
@@ -271,28 +274,28 @@ export default function HomePage() {
               <CardContent className="space-y-4">
                 <ul className="space-y-3 text-sm">
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-accent rounded-full mr-3"></div>
                     Unlimited analyses
                   </li>
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-accent rounded-full mr-3"></div>
                     Custom integrations
                   </li>
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-accent rounded-full mr-3"></div>
                     Team collaboration tools
                   </li>
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-accent rounded-full mr-3"></div>
                     Dedicated support
                   </li>
                   <li className="flex items-center text-muted-foreground">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                    <div className="w-2 h-2 bg-accent rounded-full mr-3"></div>
                     SLA guarantees
                   </li>
                 </ul>
-                <Button variant="outline" className="w-full mt-6 border-2 border-blue-300 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 bg-white text-blue-700 font-semibold py-3 rounded-lg transition-all duration-200">
-                  Contact Sales
+                <Button disabled className="w-full mt-6 bg-muted text-muted-foreground cursor-not-allowed">
+                  Coming Soon
                 </Button>
               </CardContent>
             </Card>
