@@ -9,7 +9,7 @@ import DeleteConfirmModal from '../../components/dashboard/DeleteConfirmModal';
 import Toast from '../../components/ui/Toast';
 import Button from '../../components/ui/Button';
 import AuthGuard from '../../components/auth/AuthGuard';
-import SessionDebug from '../../components/auth/SessionDebug';
+
 import { useApiKeys } from '../../hooks/useApiKeys';
 import { useToast } from '../../hooks/useToast';
 import { copyToClipboard } from '../../utils/clipboard';
@@ -255,7 +255,6 @@ export default function Dashboard() {
         keyName={deleteConfirm.keyName}
       />
       </div>
-      <SessionDebug />
     </AuthGuard>
   );
 } 
