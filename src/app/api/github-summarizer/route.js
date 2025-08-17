@@ -92,6 +92,27 @@ export async function POST(request) {
     // Generate summary using LangChain
     const summary = await summarizeGithubReadme(readmeContent);
 
+    // Increment API key usage AFTER successful processing
+    try {
+      const { data: currentData } = await supabase
+        .from('api_keys')
+        .select('usage')
+        .eq('id', apiKeyData.id)
+        .single();
+
+      if (currentData) {
+        await supabase
+          .from('api_keys')
+          .update({ 
+            usage: (currentData.usage || 0) + 1
+          })
+          .eq('id', apiKeyData.id);
+      }
+    } catch (incrementError) {
+      console.error('Error incrementing API key usage:', incrementError);
+      // Don't fail the request if usage tracking fails, just log it
+    }
+
     // Return success response with summary
     return NextResponse.json({
       summary: summary.summary,
