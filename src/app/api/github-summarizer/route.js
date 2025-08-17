@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '../../../../lib/supabase';
-import { summarizeGithubReadme, getReadmeContentFromGithub } from '../../../../lib/chain';
+import { createClient } from '@supabase/supabase-js';
+import { analyzeGithubRepository } from '../../../../lib/chain.js';
 
 export async function POST(request) {
   try {
@@ -15,6 +15,12 @@ export async function POST(request) {
         { status: 500 }
       );
     }
+
+    // Create Supabase client
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
 
     const { githubUrl } = await request.json();
     const apiKey = request.headers.get('x-api-key');
@@ -79,18 +85,8 @@ export async function POST(request) {
       );
     }
 
-    // Fetch README content from GitHub
-    const readmeContent = await getReadmeContentFromGithub(githubUrl);
-    
-    if (!readmeContent) {
-      return NextResponse.json(
-        { error: 'Could not fetch README.md from the provided GitHub repository' },
-        { status: 404 }
-      );
-    }
-
-    // Generate summary using LangChain
-    const summary = await summarizeGithubReadme(readmeContent);
+    // Generate summary using the new modular structure
+    const summary = await analyzeGithubRepository(githubUrl);
 
     // Increment API key usage AFTER successful processing
     try {
@@ -116,7 +112,11 @@ export async function POST(request) {
     // Return success response with summary
     return NextResponse.json({
       summary: summary.summary,
-      cool_facts: summary.cool_facts
+      cool_facts: summary.cool_facts,
+      stars: summary.stars,
+      latest_version: summary.latest_version,
+      website: summary.website,
+      license: summary.license
     });
 
   } catch (error) {
