@@ -1,6 +1,7 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
+import Image from 'next/image'
 
 export default function SessionDebug() {
   const { data: session, status } = useSession()
@@ -23,9 +24,11 @@ export default function SessionDebug() {
             <>
               <p><strong>Image URL:</strong></p>
               <p className="break-all text-green-400">{session.user.image}</p>
-              <img 
+              <Image 
                 src={session.user.image} 
                 alt="Debug preview" 
+                width={32}
+                height={32}
                 className="w-8 h-8 rounded-full mt-1"
                 onError={() => console.log('Debug image failed to load')}
                 onLoad={() => console.log('Debug image loaded successfully')}

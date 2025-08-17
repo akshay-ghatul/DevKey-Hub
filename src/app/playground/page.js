@@ -273,7 +273,7 @@ export default function Playground() {
                   </h3>
                   <div className="mt-2 text-sm text-blue-700">
                     <p>
-                      Enter your API key and a GitHub repository URL. The system will analyze the repository's README content and provide a comprehensive summary including interesting facts, star count, latest version, license, and website information.
+                      Enter your API key and a GitHub repository URL. The system will analyze the repository&apos;s README content and provide a comprehensive summary including interesting facts, star count, latest version, license, and website information.
                     </p>
                   </div>
                 </div>
