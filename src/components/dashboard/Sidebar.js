@@ -66,9 +66,6 @@ const navigationItems = [
 export default function Sidebar({ isOpen }) {
   const { data: session } = useSession();
   
-  // Debug logging to see what we're getting from the session
-  console.log('Session data:', session);
-  console.log('User image:', session?.user?.image);
   return (
     <div className={`fixed inset-y-0 left-0 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out ${
       isOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full'
@@ -106,61 +103,37 @@ export default function Sidebar({ isOpen }) {
 
         {/* User Profile */}
         <div className="px-4 py-4 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center">
-            {session?.user?.image ? (
-              <div className="relative">
-                <img 
-                  src={session.user.image} 
-                  alt={`${session.user.name || 'User'}'s profile`}
-                  className="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover"
-                  onError={(e) => {
-                    console.log('Image failed to load:', session.user.image);
-                    e.target.style.display = 'none';
-                    e.target.parentNode.nextSibling.style.display = 'flex';
-                  }}
-                  onLoad={() => {
-                    console.log('Image loaded successfully:', session.user.image);
-                  }}
-                />
-              </div>
-            ) : (
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                <span className="text-sm font-semibold text-white">
-                  {session?.user?.name?.charAt(0)?.toUpperCase() || session?.user?.email?.charAt(0)?.toUpperCase() || 'U'}
-                </span>
-              </div>
-            )}
-            
-            {/* Fallback for broken images */}
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full items-center justify-center border-2 border-white shadow-sm" style={{ display: 'none' }}>
-              <span className="text-sm font-semibold text-white">
-                {session?.user?.name?.charAt(0)?.toUpperCase() || session?.user?.email?.charAt(0)?.toUpperCase() || 'U'}
-              </span>
-            </div>
-            
-            <div className="ml-3 flex-1 min-w-0">
+          <div className="space-y-3">
+            {/* User Name and Email */}
+            <div className="text-center">
               <p className="text-sm font-semibold text-gray-900 truncate">
-                {session?.user?.name || session?.user?.email || 'User'}
+                {session?.user?.name || 'User'}
               </p>
-              {session?.user?.email && session?.user?.name && (
+              {session?.user?.email && (
                 <p className="text-xs text-gray-600 truncate">{session.user.email}</p>
               )}
-              <div className="flex items-center mt-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-xs text-gray-500 ml-1">Online</span>
-              </div>
             </div>
             
-            <button 
-              onClick={() => signOut()}
-              className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded-md hover:bg-red-50" 
-              aria-label="Sign out"
-              title="Sign out"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
+            {/* Online Status */}
+            <div className="flex items-center justify-center">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span className="text-xs text-gray-500">Online</span>
+            </div>
+            
+            {/* Sign Out Button */}
+            <div className="flex justify-center">
+              <button 
+                onClick={() => signOut()}
+                className="text-sm text-gray-600 hover:text-red-600 transition-colors px-3 py-2 rounded-md hover:bg-red-50 flex items-center" 
+                aria-label="Sign out"
+                title="Sign out"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
       </div>
