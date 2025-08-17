@@ -4,233 +4,191 @@ This document explains how authentication protection has been implemented to mak
 
 ## 🔐 Protected Routes
 
-The following routes now require authentication:
-- `/dashboards` - API key management dashboard
+The following routes require authentication:
+
+- `/dashboards` - User dashboard and API key management
 - `/playground` - API testing playground
-- `/protected` - Protected API playground
 
-## 🛡️ Implementation Details
-
-### 1. Next.js Middleware (`middleware.js`)
+## 🛡️ How It Works
 
 The middleware intercepts requests to protected routes and checks authentication status:
 
 ```javascript
 // Routes protected by middleware
+const isProtectedRoute = req.nextUrl.pathname.startsWith('/dashboards') || 
+                        req.nextUrl.pathname.startsWith('/playground')
+```
+
+### 1. Middleware Protection
+
+The `middleware.js` file automatically protects specified routes:
+
+```javascript
 export const config = {
   matcher: [
     '/dashboards/:path*',
-    '/protected/:path*', 
     '/playground/:path*'
   ]
 }
 ```
 
-**How it works:**
-- Checks if user has a valid session token
-- Redirects unauthenticated users to `/auth/signin`
-- Allows authenticated users to proceed
-
-### 2. AuthGuard Component (`src/components/auth/AuthGuard.js`)
+### 2. AuthGuard Component
 
 A reusable React component that wraps protected pages:
 
-**Features:**
-- Client-side authentication check
-- Loading states while checking auth
-- Automatic redirection for unauthenticated users
-- Customizable fallback UI
-- Higher-order component (HOC) variant available
-
-**Usage:**
-```jsx
-import AuthGuard from '../components/auth/AuthGuard'
+```javascript
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
 export default function ProtectedPage() {
   return (
     <AuthGuard>
       <div>Protected content here</div>
     </AuthGuard>
-  )
+  );
 }
 ```
 
 ### 3. Protected Page Updates
 
 All protected pages have been wrapped with `AuthGuard`:
-- ✅ Dashboard (`/dashboards/page.js`)
-- ✅ Playground (`/playground/page.js`) 
-- ✅ Protected (`/protected/page.js`)
 
-### 4. Navigation Updates
-
-#### AuthenticatedNavigation Component
-- Shows different navigation options based on authentication status
-- Unauthenticated: Shows message about needing to sign in
-- Authenticated: Shows links to Dashboard and API Playground
-
-#### Updated Sidebar
-- Displays user profile information from Google OAuth
-- Shows user's name, email, and profile picture
-- Includes sign-out button in the sidebar
+- ✅ Dashboards (`/dashboards/page.js`)
+- ✅ Playground (`/playground/page.js`)
 
 ## 🔄 Authentication Flow
 
-### For Unauthenticated Users:
+### Unauthenticated User Access:
 1. User tries to access protected route (e.g., `/dashboards`)
-2. Middleware detects no session → redirects to `/auth/signin`
-3. User signs in with Google OAuth
-4. Upon successful sign-in → redirected back to intended page
+2. Middleware detects no valid session
+3. User is redirected to `/auth/signin`
+4. After successful sign-in, user is redirected to intended page
 
-### For Authenticated Users:
+### Authenticated User Access:
 1. User accesses protected route
-2. Middleware validates session → allows access
-3. AuthGuard component performs additional client-side check
+2. Middleware validates session token
+3. AuthGuard component renders
 4. Protected content is displayed with user information
 
-## 🎯 User Experience Features
-
-### Loading States
-- Middleware-level: Immediate redirection (faster)
-- Component-level: Loading spinner while checking authentication
-- Graceful handling of authentication state changes
-
-### Error Handling
-- Custom error pages for authentication failures
-- Clear messaging about access requirements
-- Fallback UI for various error states
-
-### User Information Display
-- Profile picture from Google account
-- Name and email display in sidebar
-- Consistent user session across all protected pages
-
-## 🔧 Configuration Files
-
-### Environment Variables Required
-```env
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_nextauth_secret
-```
-
-### NextAuth Configuration
-- Google OAuth provider setup
-- Custom session callbacks
-- JWT strategy for stateless authentication
-- Custom redirect logic
-
-## 🚨 Security Features
+## 🎯 Key Features
 
 ### Session Management
-- JWT-based sessions (stateless)
-- Automatic session expiration
-- Secure cookie handling
-- CSRF protection built-in
+- Automatic session validation on each request
+- Seamless redirect handling
+- Persistent authentication state
 
-### Route Protection
-- Server-side middleware protection
-- Client-side component protection
-- Protection against direct URL access
-- Automatic redirection handling
+### User Experience
+- Smooth authentication flow
+- Clear error messages for unauthorized access
+- Automatic redirect after successful authentication
 
-### User Data Protection
-- Minimal user data storage
-- OAuth token management
-- Secure session storage
+### Security
+- Route-level protection via middleware
+- Component-level protection via AuthGuard
+- Session-based authentication validation
 
-## 📱 Responsive Design
+## 🚀 Implementation Details
 
-All authentication components are fully responsive:
-- Mobile-friendly sign-in forms
-- Responsive navigation components
-- Adaptive user profile displays
-- Touch-friendly interface elements
+### Middleware Configuration
+```javascript
+export default withAuth(
+  function middleware(req) {
+    console.log("Middleware: User authenticated for protected route")
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        const isAuthenticated = !!token
+        const isProtectedRoute = req.nextUrl.pathname.startsWith('/dashboards') || 
+                                req.nextUrl.pathname.startsWith('/playground')
+        
+        if (isProtectedRoute && !isAuthenticated) {
+          return false
+        }
+        
+        return true
+      },
+    },
+    pages: {
+      signIn: '/auth/signin',
+    }
+  }
+)
+```
 
-## 🔍 Testing the Protection
+### AuthGuard Component
+```javascript
+export function AuthGuard({ children }) {
+  const { data: session, status } = useSession();
+  
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+  
+  if (status === "unauthenticated") {
+    return <div>Access denied. Please sign in.</div>;
+  }
+  
+  return <>{children}</>;
+}
+```
 
-### Manual Testing Steps:
+## 🧪 Testing the Protection
 
-1. **Test Unauthenticated Access:**
-   - Open incognito/private browser window
-   - Try to access `/dashboards` directly
-   - Should redirect to `/auth/signin`
+### Test Scenarios:
 
-2. **Test Authentication Flow:**
-   - Sign in with Google from homepage
+1. **Unauthenticated Access**
+   - Try accessing `/dashboards` without signing in
+   - Should redirect to sign-in page
+
+2. **Authenticated Access**
+   - Sign in with valid credentials
    - Navigate to protected routes
-   - Should have full access to all features
+   - Should display protected content
 
-3. **Test Sign-out:**
-   - Click sign-out from sidebar or login button
+3. **Session Expiry**
+   - Let session expire
    - Try accessing protected routes
-   - Should redirect back to sign-in
+   - Should redirect to sign-in page
 
-### Expected Behaviors:
+4. **Logout Behavior**
+   - Sign out from any page
+   - Try accessing protected routes
+   - Cannot access `/dashboards` or `/playground`
 
-✅ **Unauthenticated users:**
-- Cannot access `/dashboards`, `/playground`, or `/protected`
-- Redirected to sign-in page
-- See message on homepage about signing in
+5. **Valid Session**
+   - Sign in with valid credentials
+   - Full access to all protected routes
 
-✅ **Authenticated users:**
-- Full access to all protected routes
-- See user info in sidebar and homepage
-- Can sign out from multiple locations
-
-## 🛠️ Troubleshooting
-
-### Common Issues:
-
-1. **"Module not found: Can't resolve 'next-auth/react'"**
-   - Solution: Install NextAuth.js: `npm install next-auth`
-
-2. **Redirect loops:**
-   - Check `NEXTAUTH_URL` environment variable
-   - Verify Google OAuth redirect URIs
-
-3. **Session not persisting:**
-   - Ensure `SessionProvider` wraps the app in `layout.js`
-   - Check `NEXTAUTH_SECRET` is set
-
-4. **Google OAuth errors:**
-   - Verify Google Cloud Console setup
-   - Check authorized redirect URIs
-   - Confirm client ID and secret
-
-## 🚀 Next Steps
-
-Potential enhancements:
-- Role-based access control (RBAC)
-- Multiple OAuth providers (GitHub, Discord, etc.)
-- API key-based authentication for API routes
-- Session management dashboard
-- Audit logging for authentication events
-
-## 📄 File Structure
+## 📁 File Structure
 
 ```
 src/
 ├── app/
-│   ├── auth/
-│   │   ├── signin/page.js
-│   │   └── error/page.js
 │   ├── dashboards/page.js (protected)
 │   ├── playground/page.js (protected)
-│   ├── protected/page.js (protected)
-│   └── layout.js (with SessionProvider)
+│   └── auth/
+│       ├── signin/page.js
+│       └── error/page.js
 ├── components/
-│   ├── auth/
-│   │   ├── AuthGuard.js
-│   │   ├── LoginButton.js
-│   │   ├── SessionProvider.js
-│   │   └── AuthenticatedNavigation.js
-│   └── dashboard/
-│       └── Sidebar.js (updated with user info)
-├── middleware.js (route protection)
-└── lib/
-    └── auth.js (NextAuth config)
+│   └── auth/
+│       ├── AuthGuard.js
+│       ├── SessionProvider.js
+│       └── LoginButton.js
+└── middleware.js
 ```
+
+## 🔧 Configuration
+
+### Environment Variables
+Ensure these are set in your `.env.local`:
+```bash
+NEXTAUTH_SECRET=your-secret-key
+NEXTAUTH_URL=http://localhost:3000
+```
+
+### NextAuth Configuration
+The authentication is configured in `src/app/api/auth/[...nextauth]/route.js`
+
+## ✨ Summary
 
 The authentication protection system is now fully implemented and provides a secure, user-friendly experience for accessing protected content! 🎉

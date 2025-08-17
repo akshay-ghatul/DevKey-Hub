@@ -3,7 +3,7 @@ import { withAuth } from "next-auth/middleware"
 export default withAuth(
   function middleware(req) {
     // Add any additional middleware logic here if needed
-    console.log("Middleware: User authenticated for protected route")
+    console.log("Middleware: User authenticated for dashboards/playground route")
   },
   {
     callbacks: {
@@ -11,7 +11,6 @@ export default withAuth(
         // Return true if user is authenticated, false otherwise
         const isAuthenticated = !!token
         const isProtectedRoute = req.nextUrl.pathname.startsWith('/dashboards') || 
-                                req.nextUrl.pathname.startsWith('/protected') ||
                                 req.nextUrl.pathname.startsWith('/playground')
         
         if (isProtectedRoute && !isAuthenticated) {
@@ -31,7 +30,6 @@ export default withAuth(
 export const config = {
   matcher: [
     '/dashboards/:path*',
-    '/protected/:path*', 
     '/playground/:path*'
   ]
 }

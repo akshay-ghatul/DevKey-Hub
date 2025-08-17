@@ -60,7 +60,7 @@ The API playground is showing a 500 error because Supabase environment variables
 3. **Test the API playground**:
    - Go to: `http://localhost:3000/playground`
    - Enter the test API key: `tvly-dev-1234567890abcdef`
-   - Should show: "Valid API key, /protected can be accessed"
+   - Should show: "Valid API key! You can now use the playground"
 
 ## Step 4: Create Your Own API Keys
 
