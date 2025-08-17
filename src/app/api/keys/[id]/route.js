@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server'
+import { authenticateUser, verifyResourceOwnership } from '../../../../../lib/authUtils'
 import { supabase } from '../../../../../lib/supabase'
 
-// GET /api/keys/[id] - Get a specific API key
+// GET /api/keys/[id] - Get a specific API key for authenticated user
 export async function GET(request, { params }) {
   try {
+    const auth = await authenticateUser()
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: 401 })
+    }
+
     const { id } = params
+
+    // Verify ownership
+    const isOwner = await verifyResourceOwnership('api_keys', id, auth.userId)
+    if (!isOwner) {
+      return NextResponse.json({ error: 'API key not found' }, { status: 404 })
+    }
 
     const { data, error } = await supabase
       .from('api_keys')
@@ -25,20 +37,35 @@ export async function GET(request, { params }) {
   }
 }
 
-// PUT /api/keys/[id] - Update an API key
+// PUT /api/keys/[id] - Update an API key for authenticated user
 export async function PUT(request, { params }) {
   try {
+    const auth = await authenticateUser()
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: 401 })
+    }
+
     const { id } = params
     const body = await request.json()
-    const { name } = body
+    const { name, limitUsage, monthlyLimit } = body
 
     if (!name) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
     }
 
+    // Verify ownership
+    const isOwner = await verifyResourceOwnership('api_keys', id, auth.userId)
+    if (!isOwner) {
+      return NextResponse.json({ error: 'API key not found' }, { status: 404 })
+    }
+
+    const updateData = { name }
+    if (limitUsage !== undefined) updateData.limit_usage = limitUsage
+    if (monthlyLimit !== undefined) updateData.monthly_limit = monthlyLimit
+
     const { data, error } = await supabase
       .from('api_keys')
-      .update({ name })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single()
@@ -56,10 +83,21 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE /api/keys/[id] - Delete an API key
+// DELETE /api/keys/[id] - Delete an API key for authenticated user
 export async function DELETE(request, { params }) {
   try {
+    const auth = await authenticateUser()
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: 401 })
+    }
+
     const { id } = params
+
+    // Verify ownership
+    const isOwner = await verifyResourceOwnership('api_keys', id, auth.userId)
+    if (!isOwner) {
+      return NextResponse.json({ error: 'API key not found' }, { status: 404 })
+    }
 
     const { error } = await supabase
       .from('api_keys')

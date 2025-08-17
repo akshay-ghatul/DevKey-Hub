@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server'
+import { authenticateUser } from '../../../../lib/authUtils'
 import { supabase } from '../../../../lib/supabase'
 
-// GET /api/keys - Get all API keys
+// GET /api/keys - Get all API keys for authenticated user
 export async function GET() {
   try {
+    const auth = await authenticateUser()
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: 401 })
+    }
+
     const { data, error } = await supabase
       .from('api_keys')
       .select('*')
+      .eq('user_id', auth.userId)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -19,9 +26,14 @@ export async function GET() {
   }
 }
 
-// POST /api/keys - Create a new API key
+// POST /api/keys - Create a new API key for authenticated user
 export async function POST(request) {
   try {
+    const auth = await authenticateUser()
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: 401 })
+    }
+
     const body = await request.json()
     const { name, limitUsage, monthlyLimit } = body
 
@@ -40,7 +52,8 @@ export async function POST(request) {
           value,
           usage: 0,
           limit_usage: limitUsage || false,
-          monthly_limit: monthlyLimit || 1000
+          monthly_limit: monthlyLimit || 1000,
+          user_id: auth.userId
         }
       ])
       .select()
