@@ -2,9 +2,25 @@
 
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 export default function LoginButton() {
   const { data: session, status } = useSession()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    // Clear any stored data first
+    if (typeof window !== 'undefined') {
+      sessionStorage.clear()
+      localStorage.clear()
+    }
+    
+    // Sign out without redirect, then manually redirect
+    await signOut({ redirect: false })
+    
+    // Force redirect to home page
+    window.location.href = '/'
+  }
 
   if (status === 'loading') {
     return (
@@ -36,7 +52,7 @@ export default function LoginButton() {
           </span>
         </div>
         <button
-          onClick={() => signOut()}
+          onClick={handleSignOut}
           className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

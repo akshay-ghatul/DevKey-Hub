@@ -4,6 +4,8 @@ export default withAuth(
   function middleware(req) {
     // Add any additional middleware logic here if needed
     console.log("Middleware: User authenticated for dashboards/playground route")
+    console.log("Middleware: Current path:", req.nextUrl.pathname)
+    console.log("Middleware: User token:", !!req.nextauth?.token)
   },
   {
     callbacks: {
@@ -12,6 +14,13 @@ export default withAuth(
         const isAuthenticated = !!token
         const isProtectedRoute = req.nextUrl.pathname.startsWith('/dashboards') || 
                                 req.nextUrl.pathname.startsWith('/playground')
+        
+        console.log("Middleware: Route check:", {
+          path: req.nextUrl.pathname,
+          isProtected: isProtectedRoute,
+          isAuthenticated,
+          shouldAllow: !isProtectedRoute || isAuthenticated
+        })
         
         if (isProtectedRoute && !isAuthenticated) {
           return false

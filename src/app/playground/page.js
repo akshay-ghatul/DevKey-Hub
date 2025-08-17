@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import Button from '../../components/ui/Button';
 import Toast from '../../components/ui/Toast';
 import AuthGuard from '../../components/auth/AuthGuard';
@@ -17,7 +18,22 @@ export default function Playground() {
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
+  const { data: session } = useSession();
   const { toast, showSuccess, showError, hideToast } = useToast();
+
+  // Check for stored GitHub URL from demo on component mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedUrl = sessionStorage.getItem('demoGitHubUrl');
+      if (storedUrl) {
+        setGithubUrl(storedUrl);
+        // Clear the stored URL after using it
+        sessionStorage.removeItem('demoGitHubUrl');
+        // Show a success message
+        showSuccess('GitHub URL loaded from demo! You can now analyze this repository.');
+      }
+    }
+  }, [showSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -183,12 +199,14 @@ export default function Playground() {
               </form>
 
               <div className="mt-6 text-center">
-                <Link
-                  href="/dashboards"
-                  className="text-sm font-medium text-purple-600 hover:text-purple-500"
-                >
-                  Need an API key? Go to Dashboard to create one
-                </Link>
+                {session && (
+                  <Link
+                    href="/dashboards"
+                    className="text-sm font-medium text-purple-600 hover:text-purple-500"
+                  >
+                    Need an API key? Go to Dashboard to create one
+                  </Link>
+                )}
               </div>
             </div>
 

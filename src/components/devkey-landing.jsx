@@ -34,13 +34,15 @@ export default function HomePage() {
             <span className="text-xl font-bold text-foreground">DevKey Hub</span>
           </div>
           <div className="flex items-center space-x-4">
-            <Button 
-              variant="outline" 
-              className="border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 bg-white text-gray-700 font-medium px-6 py-2 rounded-lg transition-all duration-200"
-              onClick={() => window.location.href = '/dashboards'}
-            >
-              Dashboard
-            </Button>
+            {session && (
+              <Button 
+                variant="outline" 
+                className="border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 bg-white text-gray-700 font-medium px-6 py-2 rounded-lg transition-all duration-200"
+                onClick={() => window.location.href = '/dashboards'}
+              >
+                Dashboard
+              </Button>
+            )}
             <Button 
               variant="ghost" 
               className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium px-6 py-2 rounded-lg transition-all duration-200"

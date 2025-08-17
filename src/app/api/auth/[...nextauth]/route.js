@@ -133,6 +133,13 @@ const authOptions = {
       return true
     },
     async redirect({ url, baseUrl }) {
+      console.log('Redirect callback:', { url, baseUrl })
+      
+      // Handle logout redirects to home page
+      if (url === '/api/auth/signout') {
+        return `${baseUrl}/`
+      }
+      
       if (url.startsWith("/")) return `${baseUrl}${url}`
       else if (new URL(url).origin === baseUrl) return url
       return baseUrl

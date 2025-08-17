@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const navigationItems = [
   {
@@ -14,25 +15,25 @@ const navigationItems = [
     ),
     active: true
   },
-  {
-    href: '#',
-    label: 'Research Assistant',
-    icon: (
-      <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-      </svg>
-    )
-  },
-  {
-    href: '#',
-    label: 'Research Reports',
-    icon: (
-      <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z" />
-      </svg>
-    )
-  },
+  // {
+  //   href: '#',
+  //   label: 'Research Assistant',
+  //   icon: (
+  //     <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+  //     </svg>
+  //   )
+  // },
+  // {
+  //   href: '#',
+  //   label: 'Research Reports',
+  //   icon: (
+  //     <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+  //       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z" />
+  //     </svg>
+  //   )
+  // },
   {
     href: '/playground',
     label: 'API Playground',
@@ -65,6 +66,21 @@ const navigationItems = [
 
 export default function Sidebar({ isOpen }) {
   const { data: session } = useSession();
+  const router = useRouter();
+  
+  const handleSignOut = async () => {
+    // Clear any stored data first
+    if (typeof window !== 'undefined') {
+      sessionStorage.clear()
+      localStorage.clear()
+    }
+    
+    // Sign out without redirect, then manually redirect
+    await signOut({ redirect: false });
+    
+    // Force redirect to home page
+    window.location.href = '/';
+  };
   
   return (
     <div className={`fixed inset-y-0 left-0 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out ${
@@ -123,7 +139,7 @@ export default function Sidebar({ isOpen }) {
             {/* Sign Out Button */}
             <div className="flex justify-center">
               <button 
-                onClick={() => signOut()}
+                onClick={handleSignOut}
                 className="text-sm text-gray-600 hover:text-red-600 transition-colors px-3 py-2 rounded-md hover:bg-red-50 flex items-center" 
                 aria-label="Sign out"
                 title="Sign out"
